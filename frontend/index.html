@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PharmaLab</title>
+    <meta property="og:title" content="PharmaLab" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <style data-tag="reset-style-sheet">
+      html {  line-height: 1.15;}body {  margin: 0;}* {  box-sizing: border-box;  border-width: 0;  border-style: solid;}p,li,ul,pre,div,h1,h2,h3,h4,h5,h6,figure,blockquote,figcaption {  margin: 0;  padding: 0;}button {  background-color: transparent;}button,input,optgroup,select,textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0;}button,select {  text-transform: none;}button,[type="button"],[type="reset"],[type="submit"] {  -webkit-appearance: button;}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0;}button:-moz-focus,[type="button"]:-moz-focus,[type="reset"]:-moz-focus,[type="submit"]:-moz-focus {  outline: 1px dotted ButtonText;}a {  color: inherit;  text-decoration: inherit;}input {  padding: 2px 4px;}img {  display: block;}html { scroll-behavior: smooth  }
+    </style>
+    <style data-tag="default-style-sheet">
+      html {
+        font-family: Inter;
+        font-size: 16px;
+      }
+
+      body {
+        font-weight: 400;
+        font-style:normal;
+        text-decoration: none;
+        text-transform: none;
+        letter-spacing: normal;
+        line-height: 1.15;
+        color: var(--dl-color-gray-black);
+        background-color: var(--dl-color-gray-white);
+
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"
+    />
+  </head>
+  <body>
+    <link rel="stylesheet" href="./style.css" />
+    <div>
+      <link href="./index.css" rel="stylesheet" />
+
+      <div class="home-container">
+        <div id="toolbar" class="home-container1">
+          <svg viewBox="0 0 1024 1024" class="home-icon">
+            <path
+              d="M956.29 804.482l-316.29-527.024v-213.458h32c17.6 0 32-14.4 32-32s-14.4-32-32-32h-320c-17.6 0-32 14.4-32 32s14.4 32 32 32h32v213.458l-316.288 527.024c-72.442 120.734-16.512 219.518 124.288 219.518h640c140.8 0 196.73-98.784 124.29-219.518zM241.038 640l206.962-344.938v-231.062h128v231.062l206.964 344.938h-541.926z"
+            ></path>
+          </svg>
+        </div>
+        <form
+          id="loginform"
+          enctype="application/x-www-form-urlencoded"
+          class="home-form"
+        >
+          <h1 class="home-text">Login</h1>
+          <input
+            type="email"
+            placeholder="Email"
+            id="loginemail"
+            class="input home-input"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            id="loginpass"
+            class="input home-textinput"
+          />
+          <button type="submit" id="loginsubmit" class="button">Login</button>
+        </form>
+        <form
+          id="signupform"
+          enctype="application/x-www-form-urlencoded"
+          class="home-form1"
+        >
+          <h1 class="home-text1">Sign up</h1>
+          <input
+            type="email"
+            placeholder="Email"
+            id="signupemail"
+            class="input home-input1"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            id="signuppass"
+            class="input home-textinput1"
+          />
+          <input
+            type="text"
+            placeholder="Name"
+            id="signup name"
+            class="input home-input2"
+          />
+          <input
+            type="text"
+            placeholder="Organization Name"
+            id="orgname"
+            enctype="Organization Name"
+            class="input home-input3"
+          />
+          <button type="submit" id="signupsubmit" class="button">
+            <span>
+              <span>Signup</span>
+              <br />
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+    var auth = 0;
+    var authlog = 0;
+    document.getElementById('loginform').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+           
+            email: document.getElementById('loginemail').value,
+            password: document.getElementById('loginpass').value
+        
+        };
+
+        fetch('http://127.0.0.1:5000/login/loginAuth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            authlog = data.message;
+            if(authlog==1){
+                window.location.href = "http://localhost/calculateApp/projects.html";
+                document.cookie = "userID="+ data.user.ID +";path=/";
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+
+
+    document.getElementById('signupform').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById('signup name').value,
+            email: document.getElementById('signupemail').value,
+            password: document.getElementById('signuppass').value,
+            organisationname: document.getElementById('orgname').value
+        };
+
+        fetch('http://127.0.0.1:5000/signup/signupAuth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            auth = data.message;
+            if(auth==1){
+                window.location.href = "http://localhost/calculateApp/";
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+</body>
+</html>

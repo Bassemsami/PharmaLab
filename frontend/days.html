@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DAYS</title>
+    <meta
+      property="og:title"
+      content="days"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta property="twitter:card" content="summary_large_image" />
+
+    <style data-tag="reset-style-sheet">
+      html {  line-height: 1.15;}body {  margin: 0;}* {  box-sizing: border-box;  border-width: 0;  border-style: solid;}p,li,ul,pre,div,h1,h2,h3,h4,h5,h6,figure,blockquote,figcaption {  margin: 0;  padding: 0;}button {  background-color: transparent;}button,input,optgroup,select,textarea {  font-family: inherit;  font-size: 100%;  line-height: 1.15;  margin: 0;}button,select {  text-transform: none;}button,[type="button"],[type="reset"],[type="submit"] {  -webkit-appearance: button;}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner {  border-style: none;  padding: 0;}button:-moz-focus,[type="button"]:-moz-focus,[type="reset"]:-moz-focus,[type="submit"]:-moz-focus {  outline: 1px dotted ButtonText;}a {  color: inherit;  text-decoration: inherit;}input {  padding: 2px 4px;}img {  display: block;}html { scroll-behavior: smooth  }
+    </style>
+    <style data-tag="default-style-sheet">
+      html {
+        font-family: Inter;
+        font-size: 16px;
+      }
+
+      body {
+        font-weight: 400;
+        font-style:normal;
+        text-decoration: none;
+        text-transform: none;
+        letter-spacing: normal;
+        line-height: 1.15;
+        color: var(--dl-color-gray-black);
+        background-color: var(--dl-color-gray-white);
+
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+      data-tag="font"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css"
+    />
+  </head>
+  <body>
+    <link rel="stylesheet" href="./style.css" />
+    <div>
+      <link href="./days.css" rel="stylesheet" />
+
+      <div class="projects-container">
+       
+        <div id="toolbar" class="projects-container1">
+          <div class="button123" style="margin-left: auto;">  
+            <button type="button" id="Back" class="button">Back</button>
+            <button type="button" id="logout" class="button">Logout</button>
+          </div>
+          <svg viewBox="0 0 1024 1024" class="projects-icon">
+            <path
+              d="M956.29 804.482l-316.29-527.024v-213.458h32c17.6 0 32-14.4 32-32s-14.4-32-32-32h-320c-17.6 0-32 14.4-32 32s14.4 32 32 32h32v213.458l-316.288 527.024c-72.442 120.734-16.512 219.518 124.288 219.518h640c140.8 0 196.73-98.784 124.29-219.518zM241.038 640l206.962-344.938v-231.062h128v231.062l206.964 344.938h-541.926z"
+            ></path>
+          </svg>
+        </div>
+        <h1 style="padding: 20px 0 0 0">Days</h1>
+        <div id="projectscontainer" class="projects-container2">
+
+          <ul class="list" id="lists">
+          </ul>
+          
+          
+        </div>
+     
+      </div>
+    </div>
+  </body>
+  
+</html>
+
+<script>
+document.getElementById('Back').addEventListener('click', function(event) {
+
+event.preventDefault();
+
+window.location.href = "http://localhost/calculateApp/mouse.html";
+
+});
+
+
+document.getElementById('logout').addEventListener('click', function(event) {
+
+  event.preventDefault();
+  document.cookie = "userID=0;path=/";
+  window.location.href = "http://localhost/calculateApp/";
+
+});
+
+
+
+function fetchProjects(createdBy,projectID) {
+    fetch('http://127.0.0.1:5000/calculation/showdays', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 'createdby' : createdBy,'projectID' :projectID })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.days) {
+            displayProjects(data.days);
+            document.cookie = "wow=tot;path=/";
+        } else if (data.message === 2) {
+            handleNoProjectsFound();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function displayProjects(projects) {
+    const list = document.getElementById('lists');
+    list.innerHTML = ''; // Clear existing list items
+    projects.forEach(project => {
+        const listItem = document.createElement('li');
+        listItem.textContent = project.day;
+        listItem.onclick = () => fetchProjectDetails(project.day); 
+        list.appendChild(listItem);
+
+    });
+}
+function fetchProjectDetails(day) {
+    // Fetch project details from the backend
+    document.cookie = "day="+day+";path=/";
+    window.location.href = "http://localhost/calculateApp/oneday.html";
+    
+}
+
+
+function handleNoProjectsFound() {
+    const list = document.getElementById('lists');
+    list.innerHTML = '<li>No projects found.</li>';
+}
+
+function getCookie(name) {
+    let cookieArray = document.cookie.split('; '); // Split the cookie string on the "; " delimiter
+    for(let i = 0; i < cookieArray.length; i++) {
+        let cookiePair = cookieArray[i].split('='); // Split each key-value pair
+        if (cookiePair[0] === name) {
+            return cookiePair[1]; 
+        }
+    }
+    return null; 
+}
+
+let userID = getCookie("userID");
+let projID = getCookie("projID");
+
+
+if(userID==0)
+{
+  window.location.href = "http://localhost/calculateApp/";
+}else{
+  fetchProjects(userID,projID);
+
+}
+
+
+
+</script>
